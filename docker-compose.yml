@@ -31,6 +31,8 @@ services:
       ## uncomment next line to set an admin secret
       HASURA_GRAPHQL_ADMIN_SECRET: bigbluebutton
       HASURA_GRAPHQL_ENABLE_TELEMETRY: "false"
+      # in future, make it a variable in server (demo only)
+      HASURA_GRAPHQL_AUTH_HOOK: https://bbb-graphql.bbb.imdt.dev/graphql-internal-bbb-check-auth
 volumes:
   db_data:
 
