@@ -9,7 +9,7 @@ create table chats (
 	meeting_id varchar(200) not null references meetings(id)
 );
 
-alter table meetings add public_chat_id	varchar(200) not null references chats(id);
+alter table meetings add public_chat_id	varchar(200) references chats(id);
 
 create table users (
 	id varchar(200) not null primary key,
