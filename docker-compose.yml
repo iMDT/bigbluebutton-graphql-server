@@ -30,7 +30,7 @@ services:
       # HASURA_GRAPHQL_CONSOLE_ASSETS_DIR: /srv/console-assets
       ## uncomment next line to set an admin secret
       HASURA_GRAPHQL_ADMIN_SECRET: bigbluebutton
-      HASURA_GRAPHQL_ENABLE_TELEMETRY: false
+      HASURA_GRAPHQL_ENABLE_TELEMETRY: "false"
 volumes:
   db_data:
 
