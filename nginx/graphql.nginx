@@ -1,0 +1,43 @@
+# Websocket connection
+location /v1/graphql {
+        add_header 'Access-Control-Allow-Origin' "http://localhost:3000";
+        add_header 'Access-Control-Allow-Credentials' 'true' always;
+
+	proxy_http_version 1.1;
+	proxy_set_header Upgrade $http_upgrade;
+	proxy_set_header Connection "Upgrade";
+	proxy_set_header Host $host;
+
+        add_header 'Access-Control-Allow-Origin' 'http://localhost:3000' always;
+        add_header 'Access-Control-Allow-Credentials' 'true' always;
+
+	proxy_pass         http://127.0.0.1:8080;
+}
+
+# Temporary woraround for the issue that WebSocket don't receive cookies (we need to implement proper JWT here and in the check-auth)
+# don't merge it in production (it adds vulnerability)
+location /graphql-expose-cookie {
+    add_header 'Access-Control-Allow-Origin' "http://localhost:3000";
+    add_header 'Access-Control-Allow-Credentials' 'true' always;
+
+    add_header Content-Type text/plain;
+    return 200 '$cookie_JSESSIONID';
+}
+
+
+# Called from hasura to validate the connection
+# Todo - only accept from IP address of graphql
+location = /graphql-internal-bbb-check-auth {
+        proxy_pass_request_body  off;
+        proxy_set_header         Content-Length "";
+	proxy_set_header	 X-Session-Token "";
+        proxy_set_header         X-Original-URI $request_uri?sessionToken=$http_x_session_token;
+
+      proxy_set_header Accept-Encoding "";
+      sub_filter_once off;
+      sub_filter_types *;
+      sub_filter 'authorized' '{"x-hasura-role": "bbb_client", "X-Hasura-User-Id": "$upstream_http_user_id", "X-Hasura-Meeting-Id": "$upstream_http_meeting_id"}';
+
+        proxy_set_header Host $host;
+	proxy_pass         http://127.0.0.1:8090/bigbluebutton/connection/checkAuthorization;
+}
